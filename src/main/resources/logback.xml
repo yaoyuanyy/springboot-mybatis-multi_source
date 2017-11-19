@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<configuration>
+	<!-- <include resource="org/springframework/boot/logging/logback/base.xml"/> -->
+	<property name="LOG_PATH" value="${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}" />
+	<!-- ch.qos.logback.core.ConsoleAppender 控制台输出 -->
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>[%-5level] [%thread] %X{client} %X{trace_id} %d{HH:mm:ss} %logger => %msg%n</pattern>
+		</encoder>
+	</appender>
+
+    <appender name="file_all" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/all.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/history_all.%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+            <maxHistory>31</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%-5level] [%thread] %X{client} %X{trace_id} %d{HH:mm:ss} %logger => %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 按照每天生成日志文件 -->
+    <appender name="file_info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 此日志文件只记录error级别的 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>info</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <file>${LOG_PATH}/log-info.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日志文件输出的文件名 -->
+            <FileNamePattern>${LOG_PATH}/log-info.%d{yyyy-MM-dd}</FileNamePattern>
+            <!--日志文件保留天数 -->
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+            <pattern>[%-5level] [%thread] %X{client} %X{trace_id} %d{HH:mm:ss} %logger => %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 按照每天生成日志文件 -->
+    <appender name="file_error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 此日志文件只记录error级别的 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>error</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <file>${LOG_PATH}/log-error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日志文件输出的文件名 -->
+            <FileNamePattern>${LOG_PATH}/log-error.%d{yyyy-MM-dd}</FileNamePattern>
+            <!--日志文件保留天数 -->
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度，%msg：日志消息，%n是换行符 -->
+            <pattern>[%-5level] [%thread] %X{client} %X{trace_id} %d{HH:mm:ss} %logger => %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+
+    <appender name="file_msg" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_PATH}/meipro-msg.log</File>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<encoder>
+			<pattern>[%-5level] [%thread] %X{client} %X{trace_id} %d{HH:mm:ss} %logger => %msg%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/meipro-msg.%d{yyyy-MM-dd}.log</fileNamePattern>
+		</rollingPolicy>
+	</appender>
+
+	<!-- 3rdparty Loggers -->
+	<logger name="org.springframework.core" level="info"/>
+	<logger name="org.springframework.beans" level="info"/>
+	<logger name="org.springframework.context" level="info"/>
+	<logger name="org.springframework.web" level="info"/>
+	<logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="DEBUG"/>
+	<logger name="org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor" level="DEBUG"/>
+	<logger name="org.springframework.boot" level="info" />
+	<logger name="org.springframework.aop" level="info" />
+	<logger name="org.springframework.jmx" level="info" />
+	<logger name="org.springframework.jdbc" level="info" />
+	<logger name="org.springframework.transaction" level="debug" />
+	<logger name="ch.qos.logback" level="ERROR" />
+	<logger name="org.activiti" level="info" />
+	<logger name="org.hibernate.validator" level="info" />
+	<logger name="org.apache.ibatis" level="info"/>
+	<logger name="org.mybatis" level="info"/>
+	<logger name="org.apache.catalina" level="info"/>
+	<logger name="com.mysql" level="trace"/>
+	
+	 
+	<!-- 日志级别 -->
+	<root level="info">
+		<appender-ref ref="console" />
+        <appender-ref ref="file_all" />
+        <appender-ref ref="file_info" />
+        <appender-ref ref="file_error" />
+        <appender-ref ref="file_msg" />
+    </root>
+	<!-- 
+	<springProfile name="dev">
+		<logger name="com.gomeplus.meipro.uc.service.impl.StaffInviteService" additivity="false" level="info">
+	        <appender-ref ref="file-msg" />
+	    </logger>
+	    <logger name="com.gomeplus.meipro.uc.service.impl.UserService" additivity="false" level="info">
+	        <appender-ref ref="file-msg" />
+	        <appender-ref ref="console" />
+	    </logger>
+	</springProfile> 
+	<springProfile name="pre-product">
+		<logger name="com.gomeplus.meipro.uc.service.impl.StaffInviteService" additivity="false" level="info">
+	        <appender-ref ref="file-msg" />
+	    </logger>
+	    <logger name="com.gomeplus.meipro.uc.service.impl.UserService" additivity="false" level="info">
+	        <appender-ref ref="file-msg" />
+	    </logger>
+	</springProfile> -->
+</configuration>

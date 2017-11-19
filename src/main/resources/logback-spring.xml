@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="./logback.xsd">
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!--direct log messages to stdout -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>@logging.charset@</charset>
+        </encoder>
+    </appender>
+
+    <!-- Output full logs to file -->
+    <appender name="file-all" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>@logging.file@</file>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}|%5p|%t|%c.%M:%L] %m%n</pattern>
+            <charset>@logging.charset@</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>@logging.file.history@</fileNamePattern>
+            <maxHistory>31</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Output ERROR logs to file -->
+    <appender name="file-error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>@logging.file.err@</file>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}|%5p|%t|%c.%M:%L] %m%n</pattern>
+            <charset>@logging.charset@</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>@logging.file.err.history@</fileNamePattern>
+            <maxHistory>31</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <logger name="org.mybatis" level="@logging.level.org.mybatis@"/>
+
+    <root level="@logging.level.root@">
+        <appender-ref ref="file-all"/>
+        <appender-ref ref="file-error"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

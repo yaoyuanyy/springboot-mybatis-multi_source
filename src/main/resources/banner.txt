@@ -1,0 +1,7 @@
+|
+|
+|
+|
+|
+|__ __ __
+${Ansi.GREEN} :: Spring Boot ::${spring-boot.formatted-version} ${Ansi.DEFAULT}
